@@ -2,7 +2,7 @@ FROM snowdreamtech/alpine:3.20.2
 
 LABEL maintainer="snowdream <sn0wdr1am@qq.com>"
 
-RUN apk add --no-cache nginx=1.26.1-r0
+RUN apk add --no-cache nginx=1.26.2-r0
 
 COPY http.d /etc/nginx/http.d
 

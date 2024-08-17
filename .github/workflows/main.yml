@@ -66,11 +66,11 @@ jobs:
             push: true
             tags: |
               snowdreamtech/nginx:latest
-              snowdreamtech/nginx:1.26.1
+              snowdreamtech/nginx:1.26.2
               snowdreamtech/nginx:1.26
               snowdreamtech/nginx:1
               ghcr.io/snowdreamtech/nginx:latest
-              ghcr.io/snowdreamtech/nginx:1.26.1
+              ghcr.io/snowdreamtech/nginx:1.26.2
               ghcr.io/snowdreamtech/nginx:1.26
               ghcr.io/snowdreamtech/nginx:1
              
