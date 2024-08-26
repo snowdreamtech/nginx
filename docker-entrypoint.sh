@@ -70,8 +70,8 @@ if [ -n "${ACME_DOMAIN}" ];then
 }
 elif [ -n "${ACME_DOMAINS}" ];then
 {
-    array=$(echo "${ACME_DOMAINS}" | tr ',' ' ' )
-    ACME_DOMAIN=${array[0]}
+    set -- $(echo "${ACME_DOMAINS}" | tr ',' ' ' )
+    ACME_DOMAIN="${1}"
 
     if [ "${ACME_WILDCARD}" == 1 ];then
     {
@@ -79,7 +79,7 @@ elif [ -n "${ACME_DOMAINS}" ];then
     }
     else
     {
-        for domain in "${array[@]}"
+        for domain in "$@"
         do
             COMMAND="${COMMAND} -d ${domain}"
         done 
