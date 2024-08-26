@@ -12,7 +12,6 @@ COPY http.d /etc/nginx/http.d
 RUN apk add --no-cache socat \
     nginx=1.26.2-r0 \
     && mkdir -p /etc/nginx/ssl \
-    && /usr/sbin/nginx -c /etc/nginx/nginx.conf \
     && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/heads/master.zip \
     && unzip master.zip \
     && cd acme.sh-master \
