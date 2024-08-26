@@ -7,11 +7,11 @@ Docker Image packaging for nginx. (amd64, arm32v6, arm32v7, arm64v8, i386, ppc64
 # Run
 
 ```bash
-docker run -p 80:80 -p 443:443 --name nginx snowdreamtech/nginx:latest
+docker run -p 80:80 -p 443:443 --name nginx snowdreamtech/nginx:pro-latest
 ```
 
 ```bash
-docker run -e TZ=Asia/Shanghai -p 80:80 -p 443:443 --name nginx snowdreamtech/nginx:latest
+docker run -e TZ=Asia/Shanghai -p 80:80 -p 443:443 --name nginx snowdreamtech/nginx:pro-latest
 ```
 
 # Development

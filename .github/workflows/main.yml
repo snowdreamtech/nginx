@@ -3,7 +3,7 @@ name: GitHub Actions Continuous Delivery
 on:
   push:
     branches:
-      - main  
+      - pro  
     tags:
       - '*'
   workflow_dispatch:
@@ -65,12 +65,12 @@ jobs:
             platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/riscv64,linux/s390x
             push: true
             tags: |
-              snowdreamtech/nginx:latest
-              snowdreamtech/nginx:1.26.2
-              snowdreamtech/nginx:1.26
-              snowdreamtech/nginx:1
-              ghcr.io/snowdreamtech/nginx:latest
-              ghcr.io/snowdreamtech/nginx:1.26.2
-              ghcr.io/snowdreamtech/nginx:1.26
-              ghcr.io/snowdreamtech/nginx:1
+              snowdreamtech/nginx:pro-latest
+              snowdreamtech/nginx:pro-1.26.2
+              snowdreamtech/nginx:pro-1.26
+              snowdreamtech/nginx:pro-1
+              ghcr.io/snowdreamtech/nginx:pro-latest
+              ghcr.io/snowdreamtech/nginx:pro-1.26.2
+              ghcr.io/snowdreamtech/nginx:pro-1.26
+              ghcr.io/snowdreamtech/nginx:pro-1
              
