@@ -4,7 +4,8 @@ LABEL maintainer="snowdream <sn0wdr1am@qq.com>"
 
 COPY nginx /etc/nginx
 
-RUN apk add --no-cache nginx=1.26.2-r0 \
-    && /usr/sbin/nginx -c /etc/nginx/nginx.conf
+RUN apk add --no-cache nginx=1.26.2-r0 
 
-ENTRYPOINT [ "sh", "-c", "trap : TERM INT; tail -f /dev/null & wait" ]
+ENTRYPOINT ["/usr/sbin/nginx","-g", "daemon off;"]
+
+CMD ["-c", "/etc/nginx/nginx.conf"]
