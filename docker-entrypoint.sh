@@ -123,29 +123,38 @@ fi
 if [ -n "${ACME_DOMAIN}" ];then
 {
     # acme.sh --issue
-    sh -c "${COMMAND}"
-
-    if [ $? -ne 0 ];then
+    if [ ! -d "${ACME_HOME}"/"${ACME_DOMAIN}" ] && [ ! -d "${ACME_HOME}"/"${ACME_DOMAIN}_ecc" ];then
     {
-        echo "acme.sh --issue failed."
-        exit
+        sh -c "${COMMAND}"
+
+        if [ $? -ne 0 ];then
+        {
+            echo "acme.sh --issue failed."
+            exit
+        }
+        fi
     }
     fi
 
     # acme.sh --install-cert
-    acme.sh --install-cert -d "${ACME_DOMAIN}" \
-            --key-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".key  \
-            --cert-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".cert.cer  \
-            --ca-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".ca.cer  \
-            --fullchain-file "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".fullchain.cer \
-            --reloadcmd     "service nginx force-reload"    
-        
-    if [ $? -ne 0 ];then
+    if [  ! -f "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".key  ];then
     {
-        echo "acme.sh --install-cert failed."
-        exit
+        acme.sh --install-cert -d "${ACME_DOMAIN}" \
+                --key-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".key  \
+                --cert-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".cert.cer  \
+                --ca-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".ca.cer  \
+                --fullchain-file "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".fullchain.cer \
+                --reloadcmd     "service nginx force-reload"    
+            
+        if [ $? -ne 0 ];then
+        {
+            echo "acme.sh --install-cert failed."
+            exit
+        }
+        fi
     }
     fi
+
 
     # copy default conf
     cp "${NGINX_TEMPLATES_PATH}/default.conf" "${NGINX_VHOST_PATH}/default.conf" 
