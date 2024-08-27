@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+NGINX_CONFIG_PATH="/etc/nginx"
+NGINX_VHOST_PATH="${NGINX_CONFIG_PATH}/http.d"
+NGINX_TEMPLATES_PATH="${NGINX_CONFIG_PATH}/templates"
+NGINX_H5BP_PATH="${NGINX_CONFIG_PATH}/h5bp"
+
+
 # ACME_DEAFULT_CA 
 if [ "${ACME_DEAFULT_CA}" ];then
     acme.sh --set-default-ca --server "${ACME_DEAFULT_CA}" >/dev/null 2>&1
@@ -11,7 +17,7 @@ if [ "${ACME_EMAIL}" ];then
     acme.sh --register-account -m "${ACME_EMAIL}" >/dev/null 2>&1
 fi
 
-COMMAND='acme.sh  --issue'
+COMMAND='acme.sh --issue'
 
 # ACME_STANDALONE
 if [ -n "${ACME_STANDALONE}" ];then
@@ -100,14 +106,75 @@ if [ -n "${ACME_WWW_ROOT}" ];then
 }
 fi
 
+# ACME_DEBUG
+if [ "${ACME_DEBUG}" -eq 1 ];then
+{
+    COMMAND="${COMMAND} --debug"       
+}
+fi
 
-# acme.sh --install
-acme.sh --install-cert -d "${ACME_DOMAIN}" \
---key-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".key  \
---cert-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".cert.cer  \
---ca-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".ca.cer  \
---fullchain-file "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".fullchain.cer \
---reloadcmd     "service nginx force-reload"
+if [ -n "${ACME_DOMAIN}" ];then
+{
+    # acme.sh --issue
+    sh -c "${COMMAND}"
+
+    if [ $? -ne 0 ];then
+    {
+        echo "acme.sh --issue failed."
+        exit
+    }
+    fi
+
+    # acme.sh --install-cert
+    acme.sh --install-cert -d "${ACME_DOMAIN}" \
+            --key-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".key  \
+            --cert-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".cert.cer  \
+            --ca-file       "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".ca.cer  \
+            --fullchain-file "${ACME_SSL_PATH}"/"${ACME_DOMAIN}".fullchain.cer \
+            --reloadcmd     "service nginx force-reload"    
+        
+    if [ $? -ne 0 ];then
+    {
+        echo "acme.sh --install-cert failed."
+        exit
+    }
+    fi
+
+    # copy default conf
+    cp "${NGINX_TEMPLATES_PATH}/default.conf" "${NGINX_VHOST_PATH}/default.conf" 
+    cp "${NGINX_TEMPLATES_PATH}/ssl.default.conf" "${NGINX_VHOST_PATH}/ssl.default.conf" 
+
+    cp "${NGINX_H5BP_PATH}/tls/certificate_files_example.com.conf" "${NGINX_H5BP_PATH}/tls/certificate_files_${ACME_DOMAIN}.conf"
+    sed -i "s|example\.com|${ACME_DOMAIN}|g" "${NGINX_H5BP_PATH}/tls/certificate_files_${ACME_DOMAIN}.conf"
+
+    sed -i "s|example\.com|${ACME_DOMAIN}|g" "${NGINX_VHOST_PATH}/ssl.default.conf" 
+
+    if [ "${NGINX_REDIRECT_WWW}" == "nonwww2www" ];then
+    {
+        cp "${NGINX_TEMPLATES_PATH}/example.com.http2https.nonwww2www.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
+    }
+    elif [  "${NGINX_REDIRECT_WWW}" == "www2nonwww" ];then 
+    {
+        cp "${NGINX_TEMPLATES_PATH}/example.com.http2https.www2nonwww.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
+    }
+    else
+    {
+        cp "${NGINX_TEMPLATES_PATH}/example.com.http2https.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
+    }
+    fi
+
+    sed -i "s|example\.com|${ACME_DOMAIN}|g" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
+
+    /usr/sbin/nginx -t
+
+    if [ $? -ne 0 ];then
+    {
+        echo "/usr/sbin/nginx -t failed."
+        exit
+    }
+    fi
+}
+fi
 
 #nginx 
 /usr/sbin/nginx -c /etc/nginx/nginx.conf

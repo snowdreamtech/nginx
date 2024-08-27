@@ -4,6 +4,7 @@ LABEL maintainer="snowdream <sn0wdr1am@qq.com>"
 
 # keep the docker container running
 ENV KEEPALIVE=1 \
+    NGINX_REDIRECT_WWW='none' \
     ACME_HOME='/root/.acme.sh' \
     ACME_BIN='/root/.acme.sh/acme.sh' \
     ACME_DEAFULT_CA='zerossl' \
@@ -15,7 +16,8 @@ ENV KEEPALIVE=1 \
     ACME_WILDCARD=1 \
     ACME_DNS='' \
     ACME_WWW_ROOT='' \
-    ACME_STANDALONE='none'
+    ACME_STANDALONE='none' \
+    ACME_DEBUG=0
 
 
 COPY nginx /etc/nginx
