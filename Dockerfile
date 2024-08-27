@@ -18,7 +18,7 @@ ENV KEEPALIVE=1 \
     ACME_STANDALONE='none'
 
 
-COPY http.d /etc/nginx/http.d
+COPY nginx /etc/nginx
 
 RUN apk add --no-cache socat \
     nginx=1.26.2-r0 \
