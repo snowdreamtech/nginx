@@ -7,6 +7,13 @@ NGINX_TEMPLATES_PATH="${NGINX_CONFIG_PATH}/templates"
 NGINX_H5BP_PATH="${NGINX_CONFIG_PATH}/h5bp"
 
 
+# NGINX_CLIENT_MAX_BODY_SIZE
+if [ -n "${NGINX_CLIENT_MAX_BODY_SIZE}" ];then
+{
+    sed -i "s|client_max_body_size.*|client_max_body_size ${NGINX_CLIENT_MAX_BODY_SIZE};|g" "${NGINX_CONFIG_PATH}/nginx.conf"      
+}
+fi
+
 # ACME_DEAFULT_CA 
 if [ "${ACME_DEAFULT_CA}" ];then
     acme.sh --set-default-ca --server "${ACME_DEAFULT_CA}" >/dev/null 2>&1

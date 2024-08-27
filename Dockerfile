@@ -5,6 +5,7 @@ LABEL maintainer="snowdream <sn0wdr1am@qq.com>"
 # keep the docker container running
 ENV KEEPALIVE=1 \
     NGINX_REDIRECT_WWW='none' \
+    NGINX_CLIENT_MAX_BODY_SIZE='1m' \
     ACME_HOME='/root/.acme.sh' \
     ACME_BIN='/root/.acme.sh/acme.sh' \
     ACME_DEAFULT_CA='zerossl' \
