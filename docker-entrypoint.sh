@@ -158,24 +158,24 @@ if [ -n "${ACME_DOMAIN}" ];then
 
     # copy default conf
     cp "${NGINX_TEMPLATES_PATH}/default.conf" "${NGINX_VHOST_PATH}/default.conf" 
-    cp "${NGINX_TEMPLATES_PATH}/ssl.default.conf" "${NGINX_VHOST_PATH}/ssl.default.conf" 
+    cp -n "${NGINX_TEMPLATES_PATH}/ssl.default.conf" "${NGINX_VHOST_PATH}/ssl.default.conf" 
 
-    cp "${NGINX_H5BP_PATH}/tls/certificate_files_example.com.conf" "${NGINX_H5BP_PATH}/tls/certificate_files_${ACME_DOMAIN}.conf"
+    cp -n "${NGINX_H5BP_PATH}/tls/certificate_files_example.com.conf" "${NGINX_H5BP_PATH}/tls/certificate_files_${ACME_DOMAIN}.conf"
     sed -i "s|example\.com|${ACME_DOMAIN}|g" "${NGINX_H5BP_PATH}/tls/certificate_files_${ACME_DOMAIN}.conf"
 
     sed -i "s|example\.com|${ACME_DOMAIN}|g" "${NGINX_VHOST_PATH}/ssl.default.conf" 
 
     if [ "${NGINX_REDIRECT_WWW}" == "nonwww2www" ];then
     {
-        cp "${NGINX_TEMPLATES_PATH}/example.com.http2https.nonwww2www.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
+        cp -n "${NGINX_TEMPLATES_PATH}/example.com.http2https.nonwww2www.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
     }
     elif [  "${NGINX_REDIRECT_WWW}" == "www2nonwww" ];then 
     {
-        cp "${NGINX_TEMPLATES_PATH}/example.com.http2https.www2nonwww.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
+        cp -n "${NGINX_TEMPLATES_PATH}/example.com.http2https.www2nonwww.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
     }
     else
     {
-        cp "${NGINX_TEMPLATES_PATH}/example.com.http2https.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
+        cp -n "${NGINX_TEMPLATES_PATH}/example.com.http2https.conf" "${NGINX_VHOST_PATH}/${ACME_DOMAIN}.conf" 
     }
     fi
 
