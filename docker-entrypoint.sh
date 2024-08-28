@@ -15,12 +15,12 @@ if [ -n "${NGINX_CLIENT_MAX_BODY_SIZE}" ];then
 fi
 
 # ACME_DEAFULT_CA 
-if [ "${ACME_DEAFULT_CA}" ];then
+if [ -n "${ACME_DEAFULT_CA}" ];then
     acme.sh --set-default-ca --server "${ACME_DEAFULT_CA}" >/dev/null 2>&1
 fi
 
 # ACME_EMAIL
-if [ "${ACME_EMAIL}" ];then
+if [ -n "${ACME_EMAIL}" ];then
     acme.sh --register-account -m "${ACME_EMAIL}" >/dev/null 2>&1
 fi
 
