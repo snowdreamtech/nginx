@@ -14,7 +14,9 @@ To help you get started creating a container from this image you can either use 
 
 ```bash
 docker run -d \
-  --name=base \
+  --name=nginx \
+  -p 80:80 \
+  -p 443:443 \
   -e TZ=Asia/Shanghai \
   --restart unless-stopped \
   snowdreamtech/nginx:latest
@@ -24,7 +26,9 @@ docker run -d \
 
 ```bash
 docker run -d \
-  --name=base \
+  --name=nginx \
+  -p 80:80 \
+  -p 443:443 \
   -e TZ=Asia/Shanghai \
   -v /path/to/data:/path/to/data \
   --restart unless-stopped \
@@ -37,9 +41,12 @@ docker run -d \
 
 ```bash
 services:
-  base:
+  nginx:
     image: snowdreamtech/nginx:latest
-    container_name: base
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
     environment:
       - TZ=Asia/Shanghai
     restart: unless-stopped
@@ -49,9 +56,12 @@ services:
 
 ```bash
 services:
-  base:
+  nginx:
     image: snowdreamtech/nginx:latest
-    container_name: base
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
     environment:
       - TZ=Asia/Shanghai
     volumes:
@@ -75,7 +85,7 @@ docker buildx build -t snowdreamtech/nginx --platform=linux/386,linux/amd64,linu
 1. [Faster Multi-Platform Builds: Dockerfile Cross-Compilation Guide](https://www.docker.com/blog/faster-multi-platform-builds-dockerfile-cross-compilation-guide/)
 1. [docker/buildx](https://github.com/docker/buildx)
 
-## Contact (备注：base)
+## Contact (备注：nginx)
 
 * Email: sn0wdr1am@qq.com
 * QQ: 3217680847
