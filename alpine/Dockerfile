@@ -18,7 +18,9 @@ ENV KEEPALIVE=1 \
     # which are port numbers less than 1024. 
     CAP_NET_BIND_SERVICE=1 \
     NGINX_VERSION=1.26.2-r4 \
-    ACME_SH_VERSION=3.1.0 
+    ACME_SH_VERSION=3.1.0 \
+    LE_WORKING_DIR=/home/nginx/.acme.sh \
+    PATH=${PATH}:/home/nginx/.acme.sh
 
 ARG GID=1000 \
     UID=1000  \
@@ -51,14 +53,11 @@ RUN apk add --no-cache \
     && cd acme.sh-${ACME_SH_VERSION} \
     && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
     && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
-    && export LE_WORKING_DIR="/home/${USER}/.acme.sh" \
-    && alias acme.sh="/home/${USER}/.acme.sh/acme.sh" \
     && cd / \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
-    && ln -s /home/${USER}/.acme.sh/acme.sh /usr/local/bin/acme.sh \
-    && acme.sh --upgrade --auto-upgrade \
-    && acme.sh --set-default-ca --server letsencrypt
+    && /home/${USER}/.acme.sh/acme.sh --upgrade --auto-upgrade \
+    && /home/${USER}/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 
 # Enable CAP_NET_BIND_SERVICE
 RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
