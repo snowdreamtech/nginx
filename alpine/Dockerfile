@@ -17,32 +17,51 @@ ENV KEEPALIVE=1 \
     # The cap_net_bind_service capability in Linux allows a process to bind a socket to Internet domain privileged ports, 
     # which are port numbers less than 1024. 
     CAP_NET_BIND_SERVICE=1 \
-    NGINX_VERSION=1.26.2-r4 
+    NGINX_VERSION=1.26.2-r4 \
+    ACME_SH_VERSION=3.1.0 
 
 ARG GID=1000 \
     UID=1000  \
     USER=nginx \
-    WORKDIR=/var/lib/nginx/html
+    WORKDIR=/home/nginx
 
 # Create a user with UID and GID
 RUN if [ "${USER}" != "root" ]; then \
     addgroup -g ${GID} ${USER}; \
-    adduser -h /dev/null -u ${UID} -g ${USER} -G ${USER} -s /bin/sh -D ${USER}; \
+    adduser -h /home/${USER} -u ${UID} -g ${USER} -G ${USER} -s /bin/sh -D ${USER}; \
     # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
     fi
 
+# Install nginx
 COPY nginx /etc/nginx
 
+# Install nginx
 RUN apk add --no-cache \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
     && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
     && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; 
 
+# Install acme.sh
+RUN apk add --no-cache \
+    socat \
+    cronie \
+    && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
+    && tar zxvf ${ACME_SH_VERSION}.tar.gz \
+    && cd acme.sh-${ACME_SH_VERSION} \
+    && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
+    && cd / \
+    && rm -rfv ${ACME_SH_VERSION}.tar.gz \
+    && rm -rfv acme.sh-${ACME_SH_VERSION} \
+    && ln -s /home/${USER}/.acme.sh/acme.sh /usr/local/bin/acme.sh \
+    && acme.sh --upgrade --auto-upgrade \
+    && acme.sh --set-default-ca --server letsencrypt
+
 # Enable CAP_NET_BIND_SERVICE
 RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
     apk add --no-cache libcap; \
     setcap 'cap_net_bind_service=+ep' `which nginx`; \
+    setcap 'cap_net_bind_service=+ep' `which acme.sh`; \
     fi
 
 # Switch to the user
