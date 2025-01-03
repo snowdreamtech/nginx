@@ -51,7 +51,8 @@ RUN apk add --no-cache \
     && cd acme.sh-${ACME_SH_VERSION} \
     && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
     && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
-    && . /home/${USER}/.acme.sh/acme.sh.env \
+    && export LE_WORKING_DIR="/home/${USER}/.acme.sh" \
+    && alias acme.sh="/home/${USER}/.acme.sh/acme.sh" \
     && cd / \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
