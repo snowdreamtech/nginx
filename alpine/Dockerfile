@@ -61,7 +61,6 @@ RUN apk add --no-cache \
 RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
     apk add --no-cache libcap; \
     setcap 'cap_net_bind_service=+ep' `which nginx`; \
-    setcap 'cap_net_bind_service=+ep' `which acme.sh`; \
     fi
 
 # Switch to the user
