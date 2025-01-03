@@ -75,6 +75,7 @@ RUN set -eux \
     && cd / \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
+    && ln -s /home/${USER}/.acme.sh/acme.sh /usr/local/bin/acme.sh \
     && acme.sh --upgrade --auto-upgrade \
     && acme.sh --set-default-ca --server letsencrypt \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
