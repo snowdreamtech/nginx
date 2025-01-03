@@ -41,7 +41,7 @@ COPY nginx /etc/nginx
 RUN apk add --no-cache \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
-    && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
+    && sed -i "s/^user.*/# user ${USER};/g" /etc/nginx/nginx.conf \
     && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; 
 
 # Install acme.sh
