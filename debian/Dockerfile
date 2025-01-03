@@ -43,6 +43,7 @@ RUN set -eux \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy update  \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy install --no-install-recommends -o Dpkg::Options::="--force-confold"\ 
     nginx=${NGINX_VERSION} \
+    && mkdir -p /etc/nginx/ssl \
     && rm -rfv /etc/nginx/sites-available/* \
     && rm -rfv /etc/nginx/sites-enabled/* \   
     && touch /var/run/nginx.pid \
