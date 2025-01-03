@@ -17,7 +17,7 @@ ENV KEEPALIVE=1 \
     # The cap_net_bind_service capability in Linux allows a process to bind a socket to Internet domain privileged ports, 
     # which are port numbers less than 1024. 
     CAP_NET_BIND_SERVICE=1 \
-    NGINX_VERSION=1.26.2-r3 
+    NGINX_VERSION=1.26.2-r4 
 
 ARG GID=1000 \
     UID=1000  \
