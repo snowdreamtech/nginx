@@ -51,10 +51,10 @@ RUN apk add --no-cache \
     && cd acme.sh-${ACME_SH_VERSION} \
     && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
     && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
+    && . /home/${USER}/.acme.sh/acme.sh.env \
     && cd / \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
-    && ln -s /home/${USER}/.acme.sh/acme.sh /usr/local/bin/acme.sh \
     && acme.sh --upgrade --auto-upgrade \
     && acme.sh --set-default-ca --server letsencrypt
 
