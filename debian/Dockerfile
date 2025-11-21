@@ -9,7 +9,7 @@ LABEL org.opencontainers.image.authors="Snowdream Tech" \
     org.opencontainers.image.licenses="MIT" \
     org.opencontainers.image.source="https://github.com/snowdreamtech/nginx" \
     org.opencontainers.image.vendor="Snowdream Tech" \
-    org.opencontainers.image.version="1.22.1" \
+    org.opencontainers.image.version="1.26.3" \
     org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
 
 # Switch to the user
@@ -50,6 +50,11 @@ ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
     USER=${USER} \
     WORKDIR=${WORKDIR} 
 
+ENV NGINX_VERSION=1.26.3-3+deb13u1 \
+    ACME_SH_VERSION=3.1.0 \
+    LE_WORKING_DIR=/home/nginx/.acme.sh \
+    PATH=${PATH}:/home/nginx/.acme.sh
+
 # Create a user with PUID and PGID
 RUN if [ "${USER}" != "root" ]; then \
     addgroup --gid ${PGID} ${USER}; \
@@ -57,6 +62,28 @@ RUN if [ "${USER}" != "root" ]; then \
     # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
     fi
     
+# Install nginx
+COPY nginx /etc/nginx
+
+# Install nginx
+RUN set -eux \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qqy update  \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qqy install --no-install-recommends -o Dpkg::Options::="--force-confold"\ 
+    nginx=${NGINX_VERSION} \
+    && mkdir -p /etc/nginx/ssl \
+    && rm -rfv /etc/nginx/sites-available/* \
+    && rm -rfv /etc/nginx/sites-enabled/* \   
+    && touch /var/run/nginx.pid \
+    && chown -Rv ${USER}:${USER} /var/run/nginx.pid \
+    && sed -i "s/^user.*/# user ${USER};/g" /etc/nginx/nginx.conf \
+    && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/*
+
+# Install acme.sh
 RUN set -eux \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy update  \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy install --no-install-recommends \ 
@@ -80,7 +107,7 @@ RUN set -eux \
 
 # Enable CAP_NET_BIND_SERVICE
 RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
-    # setcap 'cap_net_bind_service=+ep' `which nginx`; \
+    setcap 'cap_net_bind_service=+ep' `which nginx`; \
     fi
     
 EXPOSE 80 443

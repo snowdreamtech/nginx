@@ -9,7 +9,7 @@ LABEL org.opencontainers.image.authors="Snowdream Tech" \
     org.opencontainers.image.licenses="MIT" \
     org.opencontainers.image.source="https://github.com/snowdreamtech/nginx" \
     org.opencontainers.image.vendor="Snowdream Tech" \
-    org.opencontainers.image.version="1.26.3" \
+    org.opencontainers.image.version="1.28.0" \
     org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
     
 # Switch to the user
@@ -48,7 +48,7 @@ ENV KEEPALIVE=${KEEPALIVE} \
     USER=${USER} \
     WORKDIR=${WORKDIR} 
 
-ENV NGINX_VERSION=1.26.3-r0 \
+ENV NGINX_VERSION=1.28.0-r3 \
     ACME_SH_VERSION=3.1.0 \
     LE_WORKING_DIR=/root/.acme.sh \
     PATH=${PATH}:/root/.acme.sh
