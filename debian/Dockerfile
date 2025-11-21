@@ -1,4 +1,4 @@
-FROM snowdreamtech/debian:13.1.0
+FROM snowdreamtech/debian:13.1.1
 
 # OCI annotations to image
 LABEL org.opencontainers.image.authors="Snowdream Tech" \
@@ -29,8 +29,8 @@ ARG DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8\
     UMASK=022 \
     DEBUG=false \
-    PGID=0 \
-    PUID=0  \
+    PGID=1000 \
+    PUID=1000  \
     USER=nginx \
     WORKDIR=/home/nginx
 
@@ -51,17 +51,17 @@ ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
     WORKDIR=${WORKDIR} 
 
 ENV NGINX_VERSION=1.26.3-3+deb13u1 \
-    ACME_SH_VERSION=3.1.0 \
+    ACME_SH_VERSION=3.1.1 \
     LE_WORKING_DIR=/home/nginx/.acme.sh \
     PATH=${PATH}:/home/nginx/.acme.sh
 
-# Create a user with PUID and PGID
-RUN if [ "${USER}" != "root" ]; then \
-    addgroup --gid ${PGID} ${USER}; \
-    adduser --home /home/${USER} --uid ${PUID} --gid ${PGID} --gecos ${USER} --shell /bin/bash --disabled-password ${USER}; \
-    # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
-    fi
-    
+# # Create a user with PUID and PGID
+# RUN if [ "${USER}" != "root" ]; then \
+#     addgroup --gid ${PGID} ${USER}; \
+#     adduser --home /home/${USER} --uid ${PUID} --gid ${PGID} --gecos ${USER} --shell /bin/bash --disabled-password ${USER}; \
+#     # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
+#     fi
+
 # Install nginx
 COPY nginx /etc/nginx
 
