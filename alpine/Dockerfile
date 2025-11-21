@@ -19,7 +19,7 @@ USER root
 WORKDIR /root
 
 # keep the docker container running
-ARG KEEPALIVE=0 \
+ARG KEEPALIVE=1 \
     # The cap_net_bind_service capability in Linux allows a process to bind a socket to Internet domain privileged ports, 
     # which are port numbers less than 1024. 
     CAP_NET_BIND_SERVICE=0 \
@@ -30,8 +30,8 @@ ARG KEEPALIVE=0 \
     DEBUG=false \
     PGID=0 \
     PUID=0  \
-    USER=root \
-    WORKDIR=/root 
+    USER=nginx \
+    WORKDIR=/home/nginx
 
 # keep the docker container running
 ENV KEEPALIVE=${KEEPALIVE} \
@@ -50,8 +50,8 @@ ENV KEEPALIVE=${KEEPALIVE} \
 
 ENV NGINX_VERSION=1.28.0-r3 \
     ACME_SH_VERSION=3.1.0 \
-    LE_WORKING_DIR=/root/.acme.sh \
-    PATH=${PATH}:/root/.acme.sh
+    LE_WORKING_DIR=/home/nginx/.acme.sh \
+    PATH=${PATH}:/home/nginx/.acme.sh
 
 # Create a user with PUID and PGID
 RUN if [ "${USER}" != "root" ] && [ ! -d "/home/${USER}" ] && [ "${PUID}" -ne 0 ] && [ "${PGID}" -ne 0 ]; then \
@@ -68,7 +68,7 @@ RUN apk update \
     && apk add --no-cache \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
-    && sed -i "s/^user.*/# user ${USER};/g" /etc/nginx/nginx.conf \
+    && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
     && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; 
 
 # Install acme.sh
