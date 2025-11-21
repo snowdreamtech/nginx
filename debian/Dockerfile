@@ -76,7 +76,6 @@ RUN set -eux \
     && touch /var/run/nginx.pid \
     && chown -Rv ${USER}:${USER} /var/run/nginx.pid \
     && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
-    # && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
     && rm -rf /var/lib/apt/lists/* \
