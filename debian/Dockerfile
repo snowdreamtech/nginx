@@ -1,4 +1,4 @@
-FROM snowdreamtech/debian:13.1.1
+FROM snowdreamtech/debian:13.1.0
 
 # OCI annotations to image
 LABEL org.opencontainers.image.authors="Snowdream Tech" \
@@ -29,8 +29,8 @@ ARG DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8\
     UMASK=022 \
     DEBUG=false \
-    PGID=1000 \
-    PUID=1000  \
+    PGID=0 \
+    PUID=0  \
     USER=nginx \
     WORKDIR=/home/nginx
 
@@ -74,7 +74,7 @@ RUN set -eux \
     && rm -rfv /etc/nginx/sites-available/* \
     && rm -rfv /etc/nginx/sites-enabled/* \   
     && touch /var/run/nginx.pid \
-    && chown -Rv ${USER}:${USER} /var/run/nginx.pid \
+    # && chown -Rv ${USER}:${USER} /var/run/nginx.pid \
     && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
@@ -91,8 +91,8 @@ RUN set -eux \
     && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
     && tar zxvf ${ACME_SH_VERSION}.tar.gz \
     && cd acme.sh-${ACME_SH_VERSION} \
-    && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
-    && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
+    && bash ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
+    # && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
     && cd / \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
