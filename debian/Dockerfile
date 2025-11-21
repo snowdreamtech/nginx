@@ -55,12 +55,12 @@ ENV NGINX_VERSION=1.26.3-3+deb13u1 \
     LE_WORKING_DIR=/home/nginx/.acme.sh \
     PATH=${PATH}:/home/nginx/.acme.sh
 
-# # Create a user with PUID and PGID
-# RUN if [ "${USER}" != "root" ]; then \
-#     addgroup --gid ${PGID} ${USER}; \
-#     adduser --home /home/${USER} --uid ${PUID} --gid ${PGID} --gecos ${USER} --shell /bin/bash --disabled-password ${USER}; \
-#     # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
-#     fi
+# Create a user with PUID and PGID
+RUN if [ "${USER}" != "root" ] && [ ! -d "/home/${USER}" ] && [ "${PUID}" -ne 0 ] && [ "${PGID}" -ne 0 ]; then \
+    addgroup --gid ${PGID} ${USER}; \
+    adduser --home /home/${USER} --uid ${PUID} --gid ${PGID} --gecos ${USER} --shell /bin/bash --disabled-password ${USER}; \
+    # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
+    fi
 
 # Install nginx
 COPY nginx /etc/nginx
