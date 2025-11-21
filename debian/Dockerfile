@@ -31,8 +31,8 @@ ARG DEBIAN_FRONTEND=noninteractive \
     DEBUG=false \
     PGID=0 \
     PUID=0  \
-    USER=root \
-    WORKDIR=/root 
+    USER=nginx \
+    WORKDIR=/home/nginx
 
 ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
     # keep the docker container running
@@ -75,8 +75,8 @@ RUN set -eux \
     && rm -rfv /etc/nginx/sites-enabled/* \   
     && touch /var/run/nginx.pid \
     && chown -Rv ${USER}:${USER} /var/run/nginx.pid \
-    && sed -i "s/^user.*/# user ${USER};/g" /etc/nginx/nginx.conf \
-    && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; \
+    && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
+    # && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
     && rm -rf /var/lib/apt/lists/* \

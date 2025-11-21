@@ -68,8 +68,7 @@ RUN apk update \
     && apk add --no-cache \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
-    && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
-    && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; 
+    && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf 
 
 # Install acme.sh
 RUN apk update \
