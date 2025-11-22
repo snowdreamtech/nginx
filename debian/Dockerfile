@@ -94,7 +94,6 @@ RUN set -eux \
     && tar zxvf ${ACME_SH_VERSION}.tar.gz \
     && cd acme.sh-${ACME_SH_VERSION} \
     && bash ./acme.sh --install --home /root/.acme.sh -m my@example.com \
-    # && chown -Rv ${USER}:${USER} /root/.acme.sh \
     && cd /root \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
