@@ -50,8 +50,8 @@ ENV KEEPALIVE=${KEEPALIVE} \
 
 ENV NGINX_VERSION=1.28.0-r3 \
     ACME_SH_VERSION=3.1.1 \
-    LE_WORKING_DIR=/home/nginx/.acme.sh \
-    PATH=${PATH}:/home/nginx/.acme.sh
+    LE_WORKING_DIR=/root/.acme.sh \
+    PATH=${PATH}:/root/.acme.sh
 
 # Create a user with PUID and PGID
 RUN if [ "${USER}" != "root" ] && [ ! -d "/home/${USER}" ] && [ "${PUID}" -ne 0 ] && [ "${PGID}" -ne 0 ]; then \
@@ -78,13 +78,13 @@ RUN apk update \
     && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
     && tar zxvf ${ACME_SH_VERSION}.tar.gz \
     && cd acme.sh-${ACME_SH_VERSION} \
-    && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
-    && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
+    && ./acme.sh --install --home /root -m my@example.com \
+    && chown -Rv ${USER}:${USER} /root \
     && cd /root \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
-    && /home/${USER}/.acme.sh/acme.sh --upgrade --auto-upgrade \
-    && /home/${USER}/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    && /root/acme.sh --upgrade --auto-upgrade \
+    && /root/acme.sh --set-default-ca --server letsencrypt
 
 # Enable CAP_NET_BIND_SERVICE
 RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
