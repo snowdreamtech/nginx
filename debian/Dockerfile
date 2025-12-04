@@ -74,9 +74,6 @@ RUN set -eux \
     && mkdir -p /etc/nginx/ssl \
     && rm -rfv /etc/nginx/sites-available/* \
     && rm -rfv /etc/nginx/sites-enabled/* \   
-    # && touch /var/run/nginx.pid \
-    # && chown -Rv ${USER}:${USER} /var/run/nginx.pid \
-    # && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
     && rm -rf /var/lib/apt/lists/* \

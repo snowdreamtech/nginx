@@ -79,12 +79,11 @@ RUN apk update \
     && tar zxvf ${ACME_SH_VERSION}.tar.gz \
     && cd acme.sh-${ACME_SH_VERSION} \
     && ./acme.sh --install --home /root -m my@example.com \
-    && chown -Rv ${USER}:${USER} /root \
     && cd /root \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
-    && /root/acme.sh --upgrade --auto-upgrade \
-    && /root/acme.sh --set-default-ca --server letsencrypt
+    && /root/.acme.sh/acme.sh --upgrade --auto-upgrade \
+    && /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 
 # Enable CAP_NET_BIND_SERVICE
 RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
