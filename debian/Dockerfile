@@ -31,8 +31,8 @@ ARG DEBIAN_FRONTEND=noninteractive \
     DEBUG=false \
     PGID=0 \
     PUID=0  \
-    USER=nginx \
-    WORKDIR=/home/nginx
+    USER=root \
+    WORKDIR=/root
 
 ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
     # keep the docker container running
@@ -52,13 +52,14 @@ ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
 
 ENV NGINX_VERSION=1.26.3-3+deb13u1 \
     ACME_SH_VERSION=3.1.1 \
-    LE_WORKING_DIR=/home/nginx/.acme.sh \
-    PATH=${PATH}:/home/nginx/.acme.sh
+    LE_WORKING_DIR=/root/.acme.sh \
+    PATH=${PATH}:/root/.acme.sh
 
 # Create a user with PUID and PGID
-RUN if [ "${USER}" != "root" ] && [ ! -d "/home/${USER}" ] && [ "${PUID}" -ne 0 ] && [ "${PGID}" -ne 0 ]; then \
+RUN if [ "${USER}" != "root" ] && [ ! -d "/root" ] && [ "${PUID}" -ne 0 ] && [ "${PGID}" -ne 0 ]; then \
     addgroup --gid ${PGID} ${USER}; \
     adduser --home /home/${USER} --uid ${PUID} --gid ${PGID} --gecos ${USER} --shell /bin/bash --disabled-password ${USER}; \
+    usermod -a -G www-data ${USER}; \
     # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
     fi
 
@@ -73,9 +74,9 @@ RUN set -eux \
     && mkdir -p /etc/nginx/ssl \
     && rm -rfv /etc/nginx/sites-available/* \
     && rm -rfv /etc/nginx/sites-enabled/* \   
-    && touch /var/run/nginx.pid \
+    # && touch /var/run/nginx.pid \
     # && chown -Rv ${USER}:${USER} /var/run/nginx.pid \
-    && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
+    # && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
     && rm -rf /var/lib/apt/lists/* \
@@ -88,16 +89,17 @@ RUN set -eux \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy install --no-install-recommends \ 
     socat \
     cron \
+    && cd /root \
     && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
     && tar zxvf ${ACME_SH_VERSION}.tar.gz \
     && cd acme.sh-${ACME_SH_VERSION} \
-    && bash ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
-    # && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
-    && cd / \
+    && bash ./acme.sh --install --home /root/.acme.sh -m my@example.com \
+    # && chown -Rv ${USER}:${USER} /root/.acme.sh \
+    && cd /root \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
-    && /home/${USER}/.acme.sh/acme.sh --upgrade --auto-upgrade \
-    && /home/${USER}/.acme.sh/acme.sh --set-default-ca --server letsencrypt \
+    && /root/.acme.sh/acme.sh --upgrade --auto-upgrade \
+    && /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
     && rm -rf /var/lib/apt/lists/* \

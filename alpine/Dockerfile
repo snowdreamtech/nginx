@@ -30,8 +30,8 @@ ARG KEEPALIVE=1 \
     DEBUG=false \
     PGID=0 \
     PUID=0  \
-    USER=nginx \
-    WORKDIR=/home/nginx
+    USER=root \
+    WORKDIR=/root
 
 # keep the docker container running
 ENV KEEPALIVE=${KEEPALIVE} \
@@ -67,20 +67,22 @@ COPY nginx /etc/nginx
 RUN apk update \
     && apk add --no-cache \
     nginx=${NGINX_VERSION} \
-    && mkdir -p /etc/nginx/ssl \
-    && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf 
+    && mkdir -p /etc/nginx/ssl 
+    # \
+    # && sed -i "s/^user.*/user ${USER};/g" /etc/nginx/nginx.conf 
 
 # Install acme.sh
 RUN apk update \
     && apk add --no-cache \
     socat \
     cronie \
+    && cd /root \
     && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
     && tar zxvf ${ACME_SH_VERSION}.tar.gz \
     && cd acme.sh-${ACME_SH_VERSION} \
     && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
     && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
-    && cd / \
+    && cd /root \
     && rm -rfv ${ACME_SH_VERSION}.tar.gz \
     && rm -rfv acme.sh-${ACME_SH_VERSION} \
     && /home/${USER}/.acme.sh/acme.sh --upgrade --auto-upgrade \
