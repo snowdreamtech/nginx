@@ -49,7 +49,7 @@ ENV KEEPALIVE=${KEEPALIVE} \
     WORKDIR=${WORKDIR} 
 
 ENV NGINX_VERSION=1.28.0-r3 \
-    ACME_SH_VERSION=3.1.0 \
+    ACME_SH_VERSION=3.1.1 \
     LE_WORKING_DIR=/home/nginx/.acme.sh \
     PATH=${PATH}:/home/nginx/.acme.sh
 
