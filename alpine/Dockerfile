@@ -2,15 +2,15 @@ FROM snowdreamtech/alpine:3.22.2
 
 # OCI annotations to image
 LABEL org.opencontainers.image.authors="Snowdream Tech" \
-    org.opencontainers.image.title="Base Image Based On Alpine" \
-    org.opencontainers.image.description="Docker Images for Base on Alpine. (i386, amd64, arm32v6, arm32v7, arm64, ppc64le,riscv64, s390x)" \
-    org.opencontainers.image.documentation="https://hub.docker.com/r/snowdreamtech/base" \
-    org.opencontainers.image.base.name="snowdreamtech/base:alpine" \
+    org.opencontainers.image.title="Nginx Image Based On Alpine" \
+    org.opencontainers.image.description="Docker Images for Nginx on Alpine. (i386, amd64, arm32v6, arm32v7, arm64, ppc64le,riscv64, s390x)" \
+    org.opencontainers.image.documentation="https://hub.docker.com/r/snowdreamtech/nginx" \
+    org.opencontainers.image.base.name="snowdreamtech/nginx:alpine" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.source="https://github.com/snowdreamtech/base" \
+    org.opencontainers.image.source="https://github.com/snowdreamtech/nginx" \
     org.opencontainers.image.vendor="Snowdream Tech" \
-    org.opencontainers.image.version="3.22.2" \
-    org.opencontainers.image.url="https://github.com/snowdreamtech/base"
+    org.opencontainers.image.version="1.26.3" \
+    org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
     
 # Switch to the user
 USER root
@@ -48,21 +48,51 @@ ENV KEEPALIVE=${KEEPALIVE} \
     USER=${USER} \
     WORKDIR=${WORKDIR} 
 
+ENV NGINX_VERSION=1.26.3-r0 \
+    ACME_SH_VERSION=3.1.0 \
+    LE_WORKING_DIR=/root/.acme.sh \
+    PATH=${PATH}:/root/.acme.sh
+
 # Create a user with PUID and PGID
 RUN if [ "${USER}" != "root" ] && [ ! -d "/home/${USER}" ] && [ "${PUID}" -ne 0 ] && [ "${PGID}" -ne 0 ]; then \
     addgroup -g ${PGID} ${USER}; \
     adduser -h /home/${USER} -u ${PUID} -g ${USER} -G ${USER} -s /bin/sh -D ${USER}; \
     # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
     fi
+    
+# Install nginx
+COPY nginx /etc/nginx
 
+# Install nginx
 RUN apk update \
     && apk add --no-cache \
-    vim
+    nginx=${NGINX_VERSION} \
+    && mkdir -p /etc/nginx/ssl \
+    && sed -i "s/^user.*/# user ${USER};/g" /etc/nginx/nginx.conf \
+    && find /  -name "nginx" -exec chown -Rv ${USER}:${USER} {} \; 
+
+# Install acme.sh
+RUN apk update \
+    && apk add --no-cache \
+    socat \
+    cronie \
+    && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
+    && tar zxvf ${ACME_SH_VERSION}.tar.gz \
+    && cd acme.sh-${ACME_SH_VERSION} \
+    && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
+    && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
+    && cd / \
+    && rm -rfv ${ACME_SH_VERSION}.tar.gz \
+    && rm -rfv acme.sh-${ACME_SH_VERSION} \
+    && /home/${USER}/.acme.sh/acme.sh --upgrade --auto-upgrade \
+    && /home/${USER}/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 
 # Enable CAP_NET_BIND_SERVICE
-# RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
-    # setcap 'cap_net_bind_service=+ep' `which nginx`; \
-    # fi
+RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
+    setcap 'cap_net_bind_service=+ep' `which nginx`; \
+    fi
+    
+EXPOSE 80 443
 
 COPY entrypoint.d /usr/local/bin/entrypoint.d
 

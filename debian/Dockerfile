@@ -2,15 +2,15 @@ FROM snowdreamtech/debian:13.1.0
 
 # OCI annotations to image
 LABEL org.opencontainers.image.authors="Snowdream Tech" \
-    org.opencontainers.image.title="Base Image Based On Debian" \
-    org.opencontainers.image.description="Docker Images for Base on Debian. (i386,amd64,arm32v5,arm32v7,arm64,mips64le,ppc64le,s390x)" \
-    org.opencontainers.image.documentation="https://hub.docker.com/r/snowdreamtech/base" \
-    org.opencontainers.image.base.name="snowdreamtech/base:debian" \
+    org.opencontainers.image.title="Nginx Image Based On Debian" \
+    org.opencontainers.image.description="Docker Images for Nginx on Debian. (i386,amd64,arm32v5,arm32v7,arm64,mips64le,ppc64le,s390x)" \
+    org.opencontainers.image.documentation="https://hub.docker.com/r/snowdreamtech/nginx" \
+    org.opencontainers.image.base.name="snowdreamtech/nginx:debian" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.source="https://github.com/snowdreamtech/base" \
+    org.opencontainers.image.source="https://github.com/snowdreamtech/nginx" \
     org.opencontainers.image.vendor="Snowdream Tech" \
-    org.opencontainers.image.version="13.1.0" \
-    org.opencontainers.image.url="https://github.com/snowdreamtech/base"
+    org.opencontainers.image.version="1.22.1" \
+    org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
 
 # Switch to the user
 USER root
@@ -51,7 +51,7 @@ ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
     WORKDIR=${WORKDIR} 
 
 # Create a user with PUID and PGID
-RUN if [ "${USER}" != "root" ] && [ ! -d "/home/${USER}" ] && [ "${PUID}" -ne 0 ] && [ "${PGID}" -ne 0 ]; then \
+RUN if [ "${USER}" != "root" ]; then \
     addgroup --gid ${PGID} ${USER}; \
     adduser --home /home/${USER} --uid ${PUID} --gid ${PGID} --gecos ${USER} --shell /bin/bash --disabled-password ${USER}; \
     # sed -i "/%sudo/c ${USER} ALL=(ALL:ALL) NOPASSWD:ALL" /etc/sudoers; \
@@ -60,7 +60,18 @@ RUN if [ "${USER}" != "root" ] && [ ! -d "/home/${USER}" ] && [ "${PUID}" -ne 0 
 RUN set -eux \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy update  \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy install --no-install-recommends \ 
-    vim \
+    socat \
+    cron \
+    && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
+    && tar zxvf ${ACME_SH_VERSION}.tar.gz \
+    && cd acme.sh-${ACME_SH_VERSION} \
+    && ./acme.sh --install --home /home/${USER}/.acme.sh -m my@example.com \
+    && chown -Rv ${USER}:${USER} /home/${USER}/.acme.sh \
+    && cd / \
+    && rm -rfv ${ACME_SH_VERSION}.tar.gz \
+    && rm -rfv acme.sh-${ACME_SH_VERSION} \
+    && /home/${USER}/.acme.sh/acme.sh --upgrade --auto-upgrade \
+    && /home/${USER}/.acme.sh/acme.sh --set-default-ca --server letsencrypt \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
     && rm -rf /var/lib/apt/lists/* \
@@ -68,9 +79,11 @@ RUN set -eux \
     && rm -rf /var/tmp/*
 
 # Enable CAP_NET_BIND_SERVICE
-# RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
-#     # setcap 'cap_net_bind_service=+ep' `which nginx`; \
-#     fi
+RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
+    # setcap 'cap_net_bind_service=+ep' `which nginx`; \
+    fi
+    
+EXPOSE 80 443
 
 COPY entrypoint.d /usr/local/bin/entrypoint.d
 
