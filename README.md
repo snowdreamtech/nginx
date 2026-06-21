@@ -1,15 +1,15 @@
-# Base
+# Nginx
 
-![Docker Image Version](https://img.shields.io/docker/v/snowdreamtech/base)
-![Docker Image Size](https://img.shields.io/docker/image-size/snowdreamtech/base/latest)
-![Docker Pulls](https://img.shields.io/docker/pulls/snowdreamtech/base)
-![Docker Stars](https://img.shields.io/docker/stars/snowdreamtech/base)
+![Docker Image Version](https://img.shields.io/docker/v/snowdreamtech/nginx)
+![Docker Image Size](https://img.shields.io/docker/image-size/snowdreamtech/nginx/latest)
+![Docker Pulls](https://img.shields.io/docker/pulls/snowdreamtech/nginx)
+![Docker Stars](https://img.shields.io/docker/stars/snowdreamtech/nginx)
 
-Docker base template providing standardized container foundations with flexible entrypoint systems, multi-architecture support, and consistent configuration patterns across Alpine, Debian, and Rocky Linux distributions.
+Docker Nginx template providing standardized container foundations with flexible entrypoint systems, multi-architecture support, and consistent configuration patterns across Alpine, Debian, and Rocky Linux distributions.
 
 ## Overview
 
-The Docker base template serves as a foundational starting point for building containerized applications. It provides:
+The Docker Nginx template serves as a foundational starting point for building containerized applications. It provides:
 
 - **Standardized Dockerfiles** with OCI annotations and best practices
 - **Flexible entrypoint system** supporting custom initialization scripts
@@ -22,8 +22,8 @@ The Docker base template serves as a foundational starting point for building co
 
 ```bash
 # Pull and run the default Debian variant
-docker pull snowdreamtech/base:debian
-docker run -d --name=base -e TZ=Asia/Shanghai snowdreamtech/base:debian
+docker pull snowdreamtech/nginx:debian
+docker run -d --name=nginx -e TZ=Asia/Shanghai snowdreamtech/nginx:debian
 
 # Or use docker-compose
 docker-compose up -d
@@ -37,13 +37,13 @@ The recommended variant for most use cases, providing wide compatibility and ext
 
 ```bash
 docker run -d \
-  --name=base \
+  --name=nginx \
   -e TZ=Asia/Shanghai \
   --restart unless-stopped \
-  snowdreamtech/base:debian
+  snowdreamtech/nginx:debian
 ```
 
-**Supported Architectures**: i386, amd64, arm32v5, arm32v7, arm64, mips64le, ppc64le, s390x
+**Supported Architectures**: i386, amd64, arm32v5, arm32v7, arm64, riscv64, ppc64le, s390x
 
 **Base Image**: `snowdreamtech/debian:13.5.0`
 
@@ -53,10 +53,10 @@ Lightweight variant optimized for minimal image size and fast startup times.
 
 ```bash
 docker run -d \
-  --name=base \
+  --name=nginx \
   -e TZ=Asia/Shanghai \
   --restart unless-stopped \
-  snowdreamtech/base:alpine
+  snowdreamtech/nginx:alpine
 ```
 
 **Supported Architectures**: i386, amd64, arm32v6, arm32v7, arm64, ppc64le, riscv64, s390x
@@ -69,13 +69,13 @@ Enterprise-focused variant based on Rocky Linux, ideal for production environmen
 
 ```bash
 docker run -d \
-  --name=base \
+  --name=nginx \
   -e TZ=Asia/Shanghai \
   --restart unless-stopped \
-  snowdreamtech/base:rocky
+  snowdreamtech/nginx:rocky
 ```
 
-**Supported Architectures**: i386, amd64, arm32v5, arm32v7, arm64, mips64le, ppc64le, s390x
+**Supported Architectures**: amd64, arm64, ppc64le, s390x
 
 **Base Image**: `snowdreamtech/rocky:10.2.0`
 
@@ -85,13 +85,13 @@ docker run -d \
 
 ```bash
 # Build Debian variant
-docker build -t snowdreamtech/base:debian ./docker/debian/
+docker build -t snowdreamtech/nginx:debian ./docker/debian/
 
 # Build Alpine variant
-docker build -t snowdreamtech/base:alpine ./docker/alpine/
+docker build -t snowdreamtech/nginx:alpine ./docker/alpine/
 
 # Build Rocky variant
-docker build -t snowdreamtech/base:rocky ./docker/rocky/
+docker build -t snowdreamtech/nginx:rocky ./docker/rocky/
 ```
 
 ### Multi-Architecture Build
@@ -105,21 +105,21 @@ docker buildx create --use --name build --node build --driver-opt network=host
 # Build Debian for multiple architectures
 docker buildx build \
   --platform=linux/386,linux/amd64,linux/arm/v5,linux/arm/v7,linux/arm64,linux/mips64le,linux/ppc64le,linux/s390x \
-  -t snowdreamtech/base:debian \
+  -t snowdreamtech/nginx:debian \
   ./docker/debian/ \
   --push
 
 # Build Alpine for multiple architectures
 docker buildx build \
   --platform=linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/riscv64,linux/s390x \
-  -t snowdreamtech/base:alpine \
+  -t snowdreamtech/nginx:alpine \
   ./docker/alpine/ \
   --push
 
 # Build Rocky for multiple architectures
 docker buildx build \
   --platform=linux/386,linux/amd64,linux/arm/v5,linux/arm/v7,linux/arm64,linux/mips64le,linux/ppc64le,linux/s390x \
-  -t snowdreamtech/base:rocky \
+  -t snowdreamtech/nginx:rocky \
   ./docker/rocky/ \
   --push
 ```
@@ -156,7 +156,7 @@ docker build \
   --build-arg PUID=1000 \
   --build-arg PGID=1000 \
   --build-arg USER=appuser \
-  -t snowdreamtech/base:debian-custom \
+  -t snowdreamtech/nginx:debian-custom \
   ./docker/debian/
 ```
 
@@ -164,11 +164,11 @@ Or at runtime (requires rebuilding the image):
 
 ```bash
 docker run -d \
-  --name=base \
+  --name=nginx \
   -e PUID=1000 \
   -e PGID=1000 \
   -e USER=appuser \
-  snowdreamtech/base:debian
+  snowdreamtech/nginx:debian
 ```
 
 **Note**: User creation only occurs when `PUID≠0`, `PGID≠0`, and `USER≠root`.
@@ -179,8 +179,8 @@ docker run -d \
 
 ```yaml
 services:
-  base:
-    image: snowdreamtech/base:debian
+  nginx:
+    image: snowdreamtech/nginx:debian
     container_name: base
     environment:
       - TZ=Asia/Shanghai
@@ -191,8 +191,8 @@ services:
 
 ```yaml
 services:
-  base:
-    image: snowdreamtech/base:debian
+  nginx:
+    image: snowdreamtech/nginx:debian
     container_name: base
     environment:
       - TZ=Asia/Shanghai
@@ -209,9 +209,9 @@ Images follow semantic versioning with the format: `{major}.{minor}.{patch}-{var
 
 Examples:
 
-- `snowdreamtech/base:13.5.0-debian`
-- `snowdreamtech/base:3.24.0-alpine`
-- `snowdreamtech/base:10.2.0-rocky`
+- `snowdreamtech/nginx:13.5.0-debian`
+- `snowdreamtech/nginx:3.24.0-alpine`
+- `snowdreamtech/nginx:10.2.0-rocky`
 
 This format allows:
 
@@ -247,7 +247,7 @@ The base template includes a flexible entrypoint system that executes custom ini
 Create custom initialization scripts in your derived Dockerfile:
 
 ```dockerfile
-FROM snowdreamtech/base:debian
+FROM snowdreamtech/nginx:debian
 
 # Add your custom initialization script
 COPY my-init.sh /usr/local/bin/entrypoint.d/20-my-init.sh
@@ -263,7 +263,7 @@ CMD ["/app/start.sh"]
 Enable debug output to troubleshoot entrypoint execution:
 
 ```bash
-docker run -e DEBUG=true snowdreamtech/base:debian
+docker run -e DEBUG=true snowdreamtech/nginx:debian
 ```
 
 Output example:
@@ -288,24 +288,24 @@ Output example:
 make build
 
 # Build specific variant
-docker build -t base:debian ./docker/debian/
-docker build -t base:alpine ./docker/alpine/
-docker build -t base:rocky ./docker/rocky/
+docker build -t nginx:debian ./docker/debian/
+docker build -t nginx:alpine ./docker/alpine/
+docker build -t nginx:rocky ./docker/rocky/
 ```
 
 ### Testing
 
 ```bash
 # Test default configuration
-docker run --rm base:debian id
+docker run --rm nginx:debian id
 
 # Test custom user creation
-docker build --build-arg PUID=1000 --build-arg PGID=1000 --build-arg USER=testuser -t base:debian-test ./docker/debian/
-docker run --rm base:debian-test id
+docker build --build-arg PUID=1000 --build-arg PGID=1000 --build-arg USER=testuser -t nginx:debian-test ./docker/debian/
+docker run --rm nginx:debian-test id
 # Expected: uid=1000(testuser) gid=1000(testuser)
 
 # Test DEBUG mode
-docker run --rm -e DEBUG=true base:debian
+docker run --rm -e DEBUG=true nginx:debian
 ```
 
 ## Reference
@@ -317,7 +317,7 @@ docker run --rm -e DEBUG=true base:debian
 5. [Faster Multi-Platform Builds: Dockerfile Cross-Compilation Guide](https://www.docker.com/blog/faster-multi-platform-builds-dockerfile-cross-compilation-guide/)
 6. [docker/buildx](https://github.com/docker/buildx)
 
-## Contact (备注：base)
+## Contact (备注：nginx)
 
 * Email: <sn0wdr1am@qq.com>
 * QQ: 3217680847
