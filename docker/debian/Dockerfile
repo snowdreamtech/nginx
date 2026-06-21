@@ -18,7 +18,7 @@ ARG BUILDTIME \
     PUID=0 \
     USER=root \
     WORKDIR=/root \
-    NGINX_VERSION=1.26.3-3+deb13u1 \
+    NGINX_VERSION=1.26.3-3+deb13u4 \
     ACME_SH_VERSION=3.1.1
 
 # Standard OCI Metadata (https://github.com/opencontainers/image-spec)
