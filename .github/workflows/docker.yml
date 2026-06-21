@@ -302,9 +302,9 @@ jobs:
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
         with:
           images: |
-            name=snowdreamtech/base,enable=true
-            name=ghcr.io/snowdreamtech/base,enable=true
-            name=quay.io/snowdreamtech/base,enable=true
+            name=snowdreamtech/nginx,enable=true
+            name=ghcr.io/snowdreamtech/nginx,enable=true
+            name=quay.io/snowdreamtech/nginx,enable=true
           flavor: |
             latest=false
             prefix=
@@ -452,6 +452,8 @@ jobs:
           run_smoke_test() {
             local tag="$1"
             local registry_name="$2"
+            local container_name="smoke-test-${registry_name,,}"
+            container_name=${container_name//./-}
 
             echo "  → Running comprehensive smoke test..."
 
@@ -471,21 +473,49 @@ jobs:
                 ;;
             esac
 
-            # Execute comprehensive test suite
-            if docker run --rm \
+            # Start container in detached mode running nginx
+            docker run -d --rm --name "${container_name}" \
               -e DEBUG=false \
               -e TZ=Asia/Shanghai \
               -e PUID=1000 \
               -e PGID=1000 \
+              -p 8080:80 \
               "${tag}" \
-              sh -c "
+              nginx -g "daemon off;" >/dev/null
+
+            # Wait for Nginx to start
+            sleep 3
+
+            local test_status=0
+
+            # Execute comprehensive test suite inside the running container
+            if ! docker exec "${container_name}" sh -c "
                 echo '  ✓ Entrypoint execution: OK' && \
                 printf '  ✓ Timezone: ' && date '+%Z %z' && \
                 printf '  ✓ User context: ' && id -un && \
                 printf '  ✓ Package manager: ' && \
                 ${pkg_check} && echo 'functional' && \
-                echo '  ✓ All checks passed'
+                printf '  ✓ Nginx version: ' && nginx -v 2>&1
               "; then
+              test_status=1
+            fi
+
+            # Smoke test localhost returning 200
+            printf '  ✓ Nginx HTTP localhost test: '
+            local http_status
+            http_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 || echo "failed")
+            if [ "${http_status}" = "200" ]; then
+              echo "HTTP 200 OK"
+            else
+              echo "Failed with status ${http_status}"
+              docker logs "${container_name}"
+              test_status=1
+            fi
+
+            docker stop "${container_name}" >/dev/null
+
+            if [ ${test_status} -eq 0 ]; then
+              echo '  ✓ All checks passed'
               return 0
             else
               echo "  ✗ Smoke test failed for ${registry_name}"
@@ -593,7 +623,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
         with:
           sarif_file: "trivy-image-${{ matrix.variant }}.sarif"
-          category: "trivy-image-base-${{ matrix.variant }}"
+          category: "trivy-image-nginx-${{ matrix.variant }}"
 
       - name: "🗑️ Clean Up Build Artifacts"
         if: steps.variant-filter.outputs.skip != 'true' && always()
