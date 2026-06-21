@@ -64,7 +64,7 @@ RUN set -eux \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
     && rm -rfv /etc/nginx/sites-available/* \
-    && rm -rfv /etc/nginx/sites-enabled/* \   
+    && rm -rfv /etc/nginx/sites-enabled/* \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy clean \
     && rm -rf /var/lib/apt/lists/* \
