@@ -3,6 +3,13 @@
 ## [1.30.3](https://github.com/snowdreamtech/nginx/compare/alpine-v1.30.3...alpine-v1.30.3) (2026-06-23)
 
 
+### 🐛 Bug Fixes
+
+* **docker:** set KEEPALIVE to 1 to prevent immediate container exit ([427aba5](https://github.com/snowdreamtech/nginx/commit/427aba50c748959ed1a712473f49ed9871571917))
+
+## [1.30.3](https://github.com/snowdreamtech/nginx/compare/alpine-v1.30.3...alpine-v1.30.3) (2026-06-23)
+
+
 ### 🚀 Features
 
 * **docker:** configure Dockerfiles for nginx variants ([d061a81](https://github.com/snowdreamtech/nginx/commit/d061a81b25ed5ff3799d1dd179ee73dd32e3aa71))
