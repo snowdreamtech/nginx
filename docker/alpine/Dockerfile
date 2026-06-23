@@ -17,7 +17,7 @@ ARG BUILDTIME \
     PUID=0 \
     USER=root \
     WORKDIR=/root \
-    NGINX_VERSION=1.30.2-r1 \
+    NGINX_VERSION=1.30.3-r0 \
     ACME_SH_VERSION=3.1.1
 
 # Standard OCI Metadata (https://github.com/opencontainers/image-spec)
@@ -33,7 +33,7 @@ LABEL org.opencontainers.image.authors="Snowdream Tech" \
     org.opencontainers.image.revision="${REVISION}" \
     org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
 # x-release-please-start-version
-LABEL org.opencontainers.image.version="${VERSION:-1.30.2}"
+LABEL org.opencontainers.image.version="${VERSION:-1.30.3}"
 # x-release-please-end
 
 # Runtime Environment Configuration
