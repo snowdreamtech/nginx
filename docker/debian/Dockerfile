@@ -51,6 +51,7 @@ ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
     USER=${USER} \
     WORKDIR=${WORKDIR} \
     NGINX_VERSION=${NGINX_VERSION} \
+    NGINX_WEB_ROOT=/var/www/html \
     ACME_SH_VERSION=${ACME_SH_VERSION} \
     LE_WORKING_DIR=/root/.acme.sh \
     PATH=${PATH}:/root/.acme.sh
@@ -64,6 +65,7 @@ RUN set -eux \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy install --no-install-recommends -o Dpkg::Options::="--force-confold" \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
+    && mkdir -p ${NGINX_WEB_ROOT} \
     && rm -rfv /etc/nginx/sites-available/* \
     && rm -rfv /etc/nginx/sites-enabled/* \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \

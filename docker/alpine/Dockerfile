@@ -49,6 +49,7 @@ ENV KEEPALIVE=${KEEPALIVE} \
     USER=${USER} \
     WORKDIR=${WORKDIR} \
     NGINX_VERSION=${NGINX_VERSION} \
+    NGINX_WEB_ROOT=/var/www/html \
     ACME_SH_VERSION=${ACME_SH_VERSION} \
     LE_WORKING_DIR=/root/.acme.sh \
     PATH=${PATH}:/root/.acme.sh
@@ -60,7 +61,8 @@ COPY nginx /etc/nginx
 RUN apk update \
     && apk add --no-cache \
     nginx=${NGINX_VERSION} \
-    && mkdir -p /etc/nginx/ssl
+    && mkdir -p /etc/nginx/ssl \
+    && mkdir -p ${NGINX_WEB_ROOT}
 
 # Install acme.sh
 RUN apk update \

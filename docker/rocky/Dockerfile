@@ -49,6 +49,7 @@ ENV KEEPALIVE=${KEEPALIVE} \
     USER=${USER} \
     WORKDIR=${WORKDIR} \
     NGINX_VERSION=${NGINX_VERSION} \
+    NGINX_WEB_ROOT=/var/www/html \
     ACME_SH_VERSION=${ACME_SH_VERSION} \
     LE_WORKING_DIR=/root/.acme.sh \
     PATH=${PATH}:/root/.acme.sh
@@ -61,6 +62,7 @@ RUN dnf install -y epel-release \
     && dnf install -y \
     nginx-${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
+    && mkdir -p ${NGINX_WEB_ROOT} \
     && dnf clean all \
     && rm -rf /var/cache/dnf
 
