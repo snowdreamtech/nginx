@@ -66,6 +66,7 @@ RUN set -eux \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
     && mkdir -p ${NGINX_WEB_ROOT} \
+    && cp -a /var/www/html/index.nginx-debian.html ${NGINX_WEB_ROOT}/index.html || true \
     && rm -rfv /etc/nginx/sites-available/* \
     && rm -rfv /etc/nginx/sites-enabled/* \
     && DEBIAN_FRONTEND=noninteractive apt-get -qqy --purge autoremove \

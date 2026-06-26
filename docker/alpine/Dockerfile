@@ -62,7 +62,8 @@ RUN apk update \
     && apk add --no-cache \
     nginx=${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
-    && mkdir -p ${NGINX_WEB_ROOT}
+    && mkdir -p ${NGINX_WEB_ROOT} \
+    && cp -a /var/lib/nginx/html/. ${NGINX_WEB_ROOT}/
 
 # Install acme.sh
 RUN apk update \

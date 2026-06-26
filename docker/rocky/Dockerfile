@@ -63,6 +63,7 @@ RUN dnf install -y epel-release \
     nginx-${NGINX_VERSION} \
     && mkdir -p /etc/nginx/ssl \
     && mkdir -p ${NGINX_WEB_ROOT} \
+    && cp -a /usr/share/nginx/html/. ${NGINX_WEB_ROOT}/ \
     && dnf clean all \
     && rm -rf /var/cache/dnf
 
