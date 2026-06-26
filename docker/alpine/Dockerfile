@@ -18,7 +18,7 @@ ARG BUILDTIME \
     USER=root \
     WORKDIR=/root \
     NGINX_VERSION=1.30.3-r0 \
-    ACME_SH_VERSION=3.1.1
+    ACME_SH_VERSION=3.1.3
 
 # Standard OCI Metadata (https://github.com/opencontainers/image-spec)
 LABEL org.opencontainers.image.authors="Snowdream Tech" \
