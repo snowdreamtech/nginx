@@ -19,7 +19,8 @@ ARG BUILDTIME \
     USER=root \
     WORKDIR=/root \
     NGINX_VERSION=1.26.3-3+deb13u6 \
-    ACME_SH_VERSION=3.1.3
+    ACME_SH_VERSION=3.1.3 \
+    GITHUB_PROXY="https://gh-proxy.sn0wdr1am.com/"
 
 # Standard OCI Metadata (https://github.com/opencontainers/image-spec)
 LABEL org.opencontainers.image.authors="Snowdream Tech" \
@@ -80,7 +81,7 @@ RUN set -eux \
     wget \
     ca-certificates \
     && cd /root \
-    && wget -c https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
+    && wget -c ${GITHUB_PROXY}https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
     && tar zxvf ${ACME_SH_VERSION}.tar.gz \
     && cd acme.sh-${ACME_SH_VERSION} \
     && bash ./acme.sh --install --home /root/.acme.sh -m my@example.com \
