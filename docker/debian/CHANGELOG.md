@@ -11,4 +11,3 @@
 ### 🛠 Refactoring
 
 * standardize Nginx web root to /var/www/html across all OS variants ([c4b81ba](https://github.com/snowdreamtech/nginx/commit/c4b81bae563ef060860cc7e2279f8508e6d82c93))
-

@@ -1,7 +1,7 @@
 # Base Image (Alpine Variant)
 # Extends snowdreamtech/alpine with additional tooling and configuration.
 
-FROM snowdreamtech/alpine:3.24.0
+FROM ghcr.io/snowdreamtech/alpine:3.24.1
 
 # Build-time Configuration
 ARG BUILDTIME \
@@ -17,7 +17,7 @@ ARG BUILDTIME \
     PUID=0 \
     USER=root \
     WORKDIR=/root \
-    NGINX_VERSION=1.30.3-r0 \
+    NGINX_VERSION=1.30.4-r1 \
     ACME_SH_VERSION=3.1.3 \
     GITHUB_PROXY="https://gh-proxy.sn0wdr1am.com/"
 
@@ -26,15 +26,16 @@ LABEL org.opencontainers.image.authors="Snowdream Tech" \
     org.opencontainers.image.title="Nginx Image Based On Alpine" \
     org.opencontainers.image.description="Docker Images for Nginx on Alpine. (i386, amd64, arm32v6, arm32v7, arm64, ppc64le, riscv64, s390x)" \
     org.opencontainers.image.documentation="https://hub.docker.com/r/snowdreamtech/nginx" \
-    org.opencontainers.image.base.name="snowdreamtech/alpine:3.24.0" \
+    org.opencontainers.image.base.name="snowdreamtech/alpine:3.24.1" \
     org.opencontainers.image.licenses="MIT" \
     org.opencontainers.image.source="https://github.com/snowdreamtech/nginx" \
     org.opencontainers.image.vendor="Snowdream Tech" \
+    org.opencontainers.image.version="${VERSION}" \
     org.opencontainers.image.created="${BUILDTIME}" \
     org.opencontainers.image.revision="${REVISION}" \
     org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
 # x-release-please-start-version
-LABEL org.opencontainers.image.version="${VERSION:-1.30.3}"
+LABEL org.opencontainers.image.version="${VERSION:-1.30.4}"
 # x-release-please-end
 
 # Runtime Environment Configuration
