@@ -35,9 +35,6 @@ LABEL org.opencontainers.image.authors="Snowdream Tech" \
     org.opencontainers.image.created="${BUILDTIME}" \
     org.opencontainers.image.revision="${REVISION}" \
     org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
-# x-release-please-start-version
-LABEL org.opencontainers.image.version="${VERSION:-1.26.3}"
-# x-release-please-end
 
 # Runtime Environment Configuration
 ENV DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
