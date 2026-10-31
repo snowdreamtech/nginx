@@ -5,12 +5,12 @@ FROM ghcr.io/snowdreamtech/rocky:10.2.0
 
 # Build-time Configuration
 # x-release-please-start-version
-ARG VERSION="10.2.0"
+ARG VERSION="1.26.3"
 # x-release-please-end
 
 ARG BUILDTIME \
     REVISION \
-    KEEPALIVE=0 \
+    KEEPALIVE=1 \
     CAP_NET_BIND_SERVICE=0 \
     LANG=C.UTF-8 \
     UMASK=022 \
@@ -19,21 +19,24 @@ ARG BUILDTIME \
     PGID=0 \
     PUID=0 \
     USER=root \
-    WORKDIR=/root
+    WORKDIR=/root \
+    NGINX_VERSION=1.26.3-6.el10_2.7 \
+    ACME_SH_VERSION=3.1.6 \
+    GITHUB_PROXY="https://gh-proxy.sn0wdr1am.com/"
 
 # Standard OCI Metadata (https://github.com/opencontainers/image-spec)
 LABEL org.opencontainers.image.authors="Snowdream Tech" \
-    org.opencontainers.image.title="Base Image Based On Rocky" \
-    org.opencontainers.image.description="Docker Images for Base on Rocky. (amd64, arm64, ppc64le, s390x)" \
-    org.opencontainers.image.documentation="https://hub.docker.com/r/snowdreamtech/base" \
-    org.opencontainers.image.base.name="snowdreamtech/base:rocky" \
+    org.opencontainers.image.title="Nginx Image Based On Rocky" \
+    org.opencontainers.image.description="Docker Images for Nginx on Rocky. (amd64, arm64, ppc64le, s390x)" \
+    org.opencontainers.image.documentation="https://hub.docker.com/r/snowdreamtech/nginx" \
+    org.opencontainers.image.base.name="snowdreamtech/rocky:10.2.0" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.source="https://github.com/snowdreamtech/base" \
+    org.opencontainers.image.source="https://github.com/snowdreamtech/nginx" \
     org.opencontainers.image.vendor="Snowdream Tech" \
     org.opencontainers.image.version="${VERSION}" \
     org.opencontainers.image.created="${BUILDTIME}" \
     org.opencontainers.image.revision="${REVISION}" \
-    org.opencontainers.image.url="https://github.com/snowdreamtech/base"
+    org.opencontainers.image.url="https://github.com/snowdreamtech/nginx"
 
 # Runtime Environment Configuration
 ENV KEEPALIVE=${KEEPALIVE} \
@@ -45,18 +48,49 @@ ENV KEEPALIVE=${KEEPALIVE} \
     PGID=${PGID} \
     PUID=${PUID} \
     USER=${USER} \
-    WORKDIR=${WORKDIR}
+    WORKDIR=${WORKDIR} \
+    NGINX_VERSION=${NGINX_VERSION} \
+    NGINX_WEB_ROOT=/var/www/html \
+    ACME_SH_VERSION=${ACME_SH_VERSION} \
+    LE_WORKING_DIR=/root/.acme.sh \
+    PATH=${PATH}:/root/.acme.sh
 
-# Additional tooling and configuration for Base image
-RUN set -eux \
-    && dnf -y --allowerasing --setopt=*.skip_if_unavailable=true update \
-    && dnf -y --allowerasing --setopt=*.skip_if_unavailable=true install \
-    vim-enhanced \
-    && dnf -y --allowerasing autoremove \
-    && dnf -y --allowerasing clean all \
-    && rm -rf /var/cache/dnf \
-    && rm -rf /tmp/* \
-    && rm -rf /var/tmp/*
+# Install nginx
+COPY nginx /etc/nginx
+
+# Additional tooling and configuration for Nginx image
+RUN dnf install -y epel-release \
+    && dnf install -y \
+    nginx-${NGINX_VERSION} \
+    && mkdir -p /etc/nginx/ssl \
+    && mkdir -p ${NGINX_WEB_ROOT} \
+    && cp -a /usr/share/nginx/html/. ${NGINX_WEB_ROOT}/ \
+    && dnf clean all \
+    && rm -rf /var/cache/dnf
+
+# Install acme.sh
+RUN dnf install -y \
+    socat \
+    cronie \
+    wget \
+    tar \
+    && cd /root \
+    && wget -c ${GITHUB_PROXY}https://github.com/acmesh-official/acme.sh/archive/refs/tags/${ACME_SH_VERSION}.tar.gz \
+    && tar zxvf ${ACME_SH_VERSION}.tar.gz \
+    && cd acme.sh-${ACME_SH_VERSION} \
+    && ./acme.sh --install --home /root/.acme.sh \
+    && cd /root \
+    && rm -rfv ${ACME_SH_VERSION}.tar.gz \
+    && rm -rfv acme.sh-${ACME_SH_VERSION} \
+    && /root/.acme.sh/acme.sh --upgrade --auto-upgrade \
+    && /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt \
+    && dnf clean all \
+    && rm -rf /var/cache/dnf
+
+# Enable CAP_NET_BIND_SERVICE
+RUN if [ "${USER}" != "root" ] && [ "${CAP_NET_BIND_SERVICE}" -eq 1 ]; then \
+    setcap 'cap_net_bind_service=+ep' `which nginx`; \
+    fi
 
 # Container Orchestration Files
 COPY entrypoint.d /usr/local/bin/entrypoint.d
@@ -67,6 +101,7 @@ RUN chmod +x /usr/local/bin/entrypoint.d/*
 HEALTHCHECK NONE
 
 # Process Execution
+EXPOSE 80 443
 USER root
 WORKDIR /root
 ENTRYPOINT ["docker-entrypoint.sh"]
