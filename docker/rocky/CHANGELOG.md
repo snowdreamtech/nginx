@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.26.3](https://github.com/snowdreamtech/nginx/compare/rocky-v1.26.3...rocky-v1.26.3) (2026-10-31)
+
+
+### 🚀 Features
+
+* align nginx configuration with base and upgrade upstream versions ([90d4c48](https://github.com/snowdreamtech/nginx/commit/90d4c48ac07039e11d094bed7156fc83c4500159))
+* initial release of snowdreamtech base docker images powered by unirtm ([25f55c8](https://github.com/snowdreamtech/nginx/commit/25f55c84e8fba977d226739e9871d61e1428fdeb))
+
+
+### ♻️ Miscellaneous Chores
+
+* release main ([a2cafdc](https://github.com/snowdreamtech/nginx/commit/a2cafdc012ed85559e0239e6333af767a878eff8))
+* **release:** deduplicate CHANGELOG headers ([ec1c2ef](https://github.com/snowdreamtech/nginx/commit/ec1c2ef80d3e6af152487494cd1727eaf502214b))
+
 ## [1.26.3](https://github.com/snowdreamtech/nginx/compare/rocky-v1.26.3...rocky-v1.26.3) (2026-08-13)
 
 
@@ -29,4 +43,3 @@
 * **release:** deduplicate CHANGELOG headers ([3068d88](https://github.com/snowdreamtech/nginx/commit/3068d883bc6167773d046d3b2b0e4c479e4fee39))
 * **release:** deduplicate CHANGELOG headers ([82be3d5](https://github.com/snowdreamtech/nginx/commit/82be3d5576b65b7f69b1a9afb8604f2c8f0e47f7))
 * **speckit:** manual auto-commit trigger ([5f8a5a9](https://github.com/snowdreamtech/nginx/commit/5f8a5a9cba5d6bd42a65eaabfecd6e18b01aeeb0))
-

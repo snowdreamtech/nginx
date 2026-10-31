@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.26.3](https://github.com/snowdreamtech/nginx/compare/debian-v1.26.3...debian-v1.26.3) (2026-10-31)
+
+
+### 🚀 Features
+
+* align nginx configuration with base and upgrade upstream versions ([90d4c48](https://github.com/snowdreamtech/nginx/commit/90d4c48ac07039e11d094bed7156fc83c4500159))
+* initial release of snowdreamtech base docker images powered by unirtm ([25f55c8](https://github.com/snowdreamtech/nginx/commit/25f55c84e8fba977d226739e9871d61e1428fdeb))
+
+
+### ♻️ Miscellaneous Chores
+
+* release main ([a2cafdc](https://github.com/snowdreamtech/nginx/commit/a2cafdc012ed85559e0239e6333af767a878eff8))
+* **release:** deduplicate CHANGELOG headers ([ec1c2ef](https://github.com/snowdreamtech/nginx/commit/ec1c2ef80d3e6af152487494cd1727eaf502214b))
+
 ## [1.26.3](https://github.com/snowdreamtech/nginx/compare/debian-v1.26.3...debian-v1.26.3) (2026-08-13)
 
 
@@ -31,4 +45,3 @@
 * **speckit:** manual auto-commit trigger ([5f8a5a9](https://github.com/snowdreamtech/nginx/commit/5f8a5a9cba5d6bd42a65eaabfecd6e18b01aeeb0))
 * sync debian build matrix and documentation with upstream ([0d6e613](https://github.com/snowdreamtech/nginx/commit/0d6e6132c84a368f5b64b9144d9c7d3b7292d746))
 * update debian base image to 13.6.0 ([5f885d5](https://github.com/snowdreamtech/nginx/commit/5f885d5a771f06d449533f2f3c619d27444822f5))
-
